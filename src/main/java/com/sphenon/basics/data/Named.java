@@ -1,7 +1,7 @@
 package com.sphenon.basics.data;
 
 /****************************************************************************
-  Copyright 2001-2018 Sphenon GmbH
+  Copyright 2001-2024 Sphenon GmbH
 
   Licensed under the Apache License, Version 2.0 (the "License"); you may not
   use this file except in compliance with the License. You may obtain a copy
@@ -16,6 +16,11 @@ package com.sphenon.basics.data;
 
 import com.sphenon.basics.context.*;
 
+import java.util.List;
+import java.util.ArrayList;
+import java.util.Map;
+import java.util.HashMap;
+
 public class Named<T> implements ContextAware {
 
     public Named(CallContext context) {
@@ -24,6 +29,13 @@ public class Named<T> implements ContextAware {
     public Named(CallContext context, String name, T data) {
         this.name = name;
         this.data = data;
+        this.data_source = null;
+    }
+
+    public Named(CallContext context, String name, DataSource<T> data_source) {
+        this.name = name;
+        this.data = null;
+        this.data_source = data_source;
     }
 
     protected String name;
@@ -39,11 +51,32 @@ public class Named<T> implements ContextAware {
     protected T data;
 
     public T getData (CallContext context) {
+        if (this.data == null && this.data_source != null) {
+            this.data = this.data_source.get(context);
+        }
         return this.data;
+    }
+
+    public T defaultData (CallContext context) {
+        return null;
     }
 
     public void setData (CallContext context, T data) {
         this.data = data;
+    }
+
+    protected DataSource<T> data_source;
+
+    public DataSource<T> getDataSource (CallContext context) {
+        return this.data_source;
+    }
+
+    public DataSource<T> defaultDataSource (CallContext context) {
+        return null;
+    }
+
+    public void setDataSource (CallContext context, DataSource<T> data_source) {
+        this.data_source = data_source;
     }
 
     public String getDataString (CallContext context) {
@@ -56,6 +89,14 @@ public class Named<T> implements ContextAware {
 
     static public String toString(CallContext context, Named[] named_datas) {
         return com.sphenon.basics.system.StringUtilities.join(context, named_datas, null, "=", null, true);
+    }
+
+    static public<T> Map<String,T> toMap(CallContext context, List<Named<T>> list) {
+        Map<String,T> map = new HashMap<String,T>();
+        for (Named<T> named : list) {
+            map.put(named.getName(context), named.getData(context));
+        }
+        return map;
     }
 }
 

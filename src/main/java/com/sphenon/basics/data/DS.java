@@ -1,7 +1,7 @@
 package com.sphenon.basics.data;
 
 /****************************************************************************
-  Copyright 2001-2018 Sphenon GmbH
+  Copyright 2001-2024 Sphenon GmbH
 
   Licensed under the Apache License, Version 2.0 (the "License"); you may not
   use this file except in compliance with the License. You may obtain a copy
@@ -16,12 +16,15 @@ package com.sphenon.basics.data;
 
 import com.sphenon.basics.context.*;
 
-public class DS<T> extends DataSourceBase<T> {
+public class DS<T> extends DataSlotBase<T> {
     protected T value;
     public DS(CallContext context, T value) {
         this.value = value;
     }
     public T get(CallContext context) {
         return value;
+    }
+    public void set(CallContext context, T value) {
+        this.value = value;
     }
 }

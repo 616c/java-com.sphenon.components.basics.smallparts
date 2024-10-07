@@ -1,7 +1,7 @@
 package com.sphenon.basics.data;
 
 /****************************************************************************
-  Copyright 2001-2018 Sphenon GmbH
+  Copyright 2001-2024 Sphenon GmbH
 
   Licensed under the Apache License, Version 2.0 (the "License"); you may not
   use this file except in compliance with the License. You may obtain a copy
@@ -15,19 +15,14 @@ package com.sphenon.basics.data;
 *****************************************************************************/
 
 import com.sphenon.basics.context.*;
+import com.sphenon.basics.function.*;
 
-/**
-   A DataSource provides a complete method to obtain some target object
-   without any further means (like a retrieval service, a namespace or
-   alike).
-
-   In contrast to a {@link com.sphenon.basics.reference.Reference}, the
-   specific method used to obtain the object or any kind of information used
-   for this retrieval is completely encapsulated and considered as being not
-   of interest - while of course a Reference may serve internally as such kind
-   information.
- */
-public interface DataSource<T> {
-    public Object getObject(CallContext context);
-    public T get(CallContext context);
+public class DataSource_Getter<T> extends DataSourceBase<T> {
+    protected Getter<T> getter;
+    public DataSource_Getter(CallContext context, Getter<T> getter) {
+        this.getter = getter;
+    }
+    public T get(CallContext context) {
+        return this.getter.get(context);
+    }
 }
